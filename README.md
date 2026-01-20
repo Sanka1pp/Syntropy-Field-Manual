@@ -20,6 +20,7 @@ Every engagement documented here follows the **Reporter Protocol**, emphasizing 
 | Target | OS | Difficulty | Key Mental Model | Detection Value |
 | :--- | :---: | :---: | :--- | :--- |
 | **[Nibbles](https://github.com/Sanka1pp/Syntropy-Field-Manual/blob/main/01-HackTheBox/Linux/Nibbles/Hack%20The%20Box%20(HTB)%20Nibbles%20Machine%20Writeup%20%5B54nK4l%202ed8aeddd8dc80f99963c9bc0e180d93.md)** | 🐧 | `Easy` | *The False Failure Paradox* | FIM for Admin Scripts |
+| **[Legacy](01-HackTheBox/Windows/Legacy/Report.md)** | 🪟 | `Easy` | *Protocol Decay* | MS08-067 NIDS Rule |
 
 ---
 
