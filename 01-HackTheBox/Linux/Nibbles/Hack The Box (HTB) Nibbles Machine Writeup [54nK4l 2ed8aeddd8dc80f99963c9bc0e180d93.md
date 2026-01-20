@@ -15,7 +15,7 @@ Nibbles serves as a masterclass in the "Soft Center" architecture. While the per
 
 ## Attack Chain Visualized
 
-![image.png](image.png)
+![image.png](Assets/image.png)
 
 ## Reconnaissance
 
@@ -26,21 +26,21 @@ We begin with the standard procedure: a port scan to define the attack surface. 
 sudo nmap -sC -sV -oA nibbles_scan $TARGET
 ```
 
-![image.png](image%201.png)
+![image.png](Assets/image%201.png)
 
 While the OpenSSH version appears outdated, the primary attack surface is the Apache web server on port 80.
 
 Visiting the web root presents a "Hello World" page. Visually, it is a dead end.
 
-![image.png](image%202.png)
+![image.png](Assets/image%202.png)
 
 We never trust the rendered view. We inspect the source code (`Ctrl+U`). Developers often leave structural comments that the browser hides. Here, we find the breadcrumb that breaks the assessment wide open.
 
-![image.png](image%203.png)
+![image.png](Assets/image%203.png)
 
 With the target directory identified, we pivot our enumeration tools to `http://10.129.114.123/nibbleblog/`.
 
-![image.png](image%204.png)
+![image.png](Assets/image%204.png)
 
 Discovery of a new web endpoint triggers immediate directory enumeration. We need to map the application's internal structure to find hidden pages that increase the attack surface on target appliaction.
 
@@ -48,17 +48,17 @@ Discovery of a new web endpoint triggers immediate directory enumeration. We nee
 gobuster dir -u http://$target/nibbleblog/ -w /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt
 ```
 
-![image.png](a09a7a1c-5e82-495f-ae31-707d2f39a8f1.png)
+![image.png](Assets/a09a7a1c-5e82-495f-ae31-707d2f39a8f1.png)
 
 We locate a `README` file which confirms the software version: **`Nibbleblog v4.0.3`**. This version is historically vulnerable to authenticated arbitrary file upload ([`CVE-2015-6967`](https://www.exploit-db.com/exploits/38489)).
 
-![image.png](image%205.png)
+![image.png](Assets/image%205.png)
 
 Simultaneously, we scan the `/content` directory. We find `users.xml`, which leaks the administrative username as `admin` within the `/content/private/users.xml` file.
 
-![image.png](image%206.png)
+![image.png](Assets/image%206.png)
 
-![image.png](image%207.png)
+![image.png](Assets/image%207.png)
 
 ## The Foothold
 
@@ -153,17 +153,17 @@ Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2026-01-16 09:42:
 
 This gives us access to the `/admin` endpoint on Nibbleblog 
 
-![image.png](image%208.png)
+![image.png](Assets/image%208.png)
 
-![image.png](image%209.png)
+![image.png](Assets/image%209.png)
 
 ## Exploitation
 
 We navigate to **Plugins > My Image**, the vector for CVE-2015-6967. This plugin allows image uploads but fails to validate PHP extensions.
 
-![image.png](image%2010.png)
+![image.png](Assets/image%2010.png)
 
-![image.png](image%2011.png)
+![image.png](Assets/image%2011.png)
 
 Leveraging the unrestricted file upload feature, we craft a minimal PHP execution script (`RCE.php`) to test for code execution , the command that it executes is the `id` command.
 
@@ -192,13 +192,13 @@ With our payload successfully uploaded to the webserver our next challenge is to
 
 From our enumeration of subdirectories on the `/nibbleblog` endpoint the `/admin` & the `/content` pages, each had a folder named `plugin` and since this is where we uploaded the `RCE.php` file it is a good place to look for our uploaded payload. The `/content/plugins/my_images` page shows a new file that has our current timestamp indicating that to be the uploaded payload file (albeit named as `image.php`)
 
-![image.png](image%2012.png)
+![image.png](Assets/image%2012.png)
 
-![image.png](image%2013.png)
+![image.png](Assets/image%2013.png)
 
 There are 2 files with the current timestamp meaning that they were modified recently but we do not see a file named `RCE.php`  here , what we instead see is the file named `image.php` and when I open the link I get a command execution (result of the `id` command) shown on the webpage
 
-![image.png](image%2014.png)
+![image.png](Assets/image%2014.png)
 
 This confirms command execution on the target webserver , this is great news as this gives us the possibility of a Remote code execution on target .
 
@@ -208,7 +208,7 @@ Alternately in order to execute this file (since we know the filename and its pa
 curl http://10.129.113.69/nibbleblog/content/private/plugins/my_image/image.php
 ```
 
-![image.png](8f75b46f-c661-49b5-b713-424491815231.png)
+![image.png](Assets/8f75b46f-c661-49b5-b713-424491815231.png)
 
 Now that we have a confirmed command execution on the target we can abuse this to get a reverse shell on the machine by uploading the [php reverse shell script by pentestmonkey](https://github.com/pentestmonkey/php-reverse-shell/blob/master/php-reverse-shell.php):
 
@@ -402,7 +402,7 @@ curl http://$TARGET/nibbleblog/content/private/plugins/my_image/image.php
 
 We construct a [PHP reverse shell (from Pentest Monkey PHP reverse shell)](https://github.com/pentestmonkey/php-reverse-shell/blob/master/php-reverse-shell.php) and upload it. The application (again) responds with a wall of PHP warning messages, appearing to indicate a failure but followed by a File Uploaded Successfully prompt.
 
-![image.png](image%2015.png)
+![image.png](Assets/image%2015.png)
 
 **The Mental Model: "Trust but Verify"**
 Error messages are often untrustworthy. They may indicate a rendering error (e.g., trying to display a PHP file as an image) rather than an upload error. We check the upload directory `/content/private/plugins/my_image/` for this new reverse shell payload.
@@ -413,7 +413,7 @@ We trigger the payload using `curl` while a listener runs on our attack box.
 curl http://$TARGET/nibbleblog/content/private/plugins/my_image/image.php
 ```
 
-![image.png](image%2016.png)
+![image.png](Assets/image%2016.png)
 
 We have achieved a foothold as user `nibbler` and capture the `user.txt` file.
 
@@ -421,7 +421,7 @@ We have achieved a foothold as user `nibbler` and capture the `user.txt` file.
 
 We begin by listing the files that the current user can run as `sudo`to identify writable files or misconfigured execution paths. This reveals a file `monitor.sh` that we can run as an elevated user.
 
-![image.png](image%2017.png)
+![image.png](Assets/image%2017.png)
 
 The `monitor.sh` script is a comprehensive system health monitoring tool designed for Linux environments. It gathers essential information such as the operating system type and version, kernel release, hostname, internal and external IP addresses, DNS servers, logged-in users, memory and disk usage, load averages, and system uptime. The script checks for internet connectivity by pinging a known server and displays its findings in a user-friendly format with colored output for better readability. Additionally, if executed with the `-i` option, it attempts to install itself as a command at `/usr/bin/monitor`, allowing users to easily invoke it from anywhere. The script concludes by cleaning up any temporary files it created during its execution, ensuring no unnecessary clutter is left behind.
 
@@ -458,7 +458,7 @@ root
 
 We execute the script with sudo privileges: `sudo ./monitor.sh`.
 
-![image.png](image%2018.png)
+![image.png](Assets/image%2018.png)
 
 ### Manual Exploitation Method 2:
 
@@ -477,11 +477,11 @@ nibbler@Nibbles:$ sudo /monitor.sh
 
 Here we have the `monitor.sh` file showing the appended `nc mkfifo` payload which we then run as sudo and wait for the connection on our listener
 
-![image.png](image%2019.png)
+![image.png](Assets/image%2019.png)
 
 Our listener meanwhile gave us a shell as root:
 
-![image.png](84471a4d-e4fd-44c2-99f7-bb5b0f19b100.png)
+![image.png](Assets/84471a4d-e4fd-44c2-99f7-bb5b0f19b100.png)
 
 ### Automated Exploitation using Metasploit:
 
@@ -560,9 +560,9 @@ cat /home/nibbler/user.txt
 79c03865431abf47b90ef24b9695e148
 ```
 
-![image.png](image%2020.png)
+![image.png](Assets/image%2020.png)
 
-![image.png](image%2021.png)
+![image.png](Assets/image%2021.png)
 
 ## Detection Engineering:
 
