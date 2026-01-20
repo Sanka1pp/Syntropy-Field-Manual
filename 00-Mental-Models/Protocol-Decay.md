@@ -13,5 +13,14 @@ You cannot patch a decayed protocol; you must **deprecate** it.
 * **Audit:** Identify all services negotiating SMBv1, TLS 1.0, or NTLMv1.
 * **Segregate:** If a legacy machine *must* exist (e.g., for manufacturing hardware), it must be air-gapped or micro-segmented into a "Zombie Vlan" with no internet access and strict ACLs.
 
+### Case Study: HTB Legacy
+In the Legacy operation, the target (Windows XP) exposed SMBv1.
+
+* **Signal:** Nmap revealed smb-vuln-ms08-067 and smb-vuln-ms17-010.
+
+* **Reality:** The vulnerability allowed us to corrupt the kernel memory via a malformed RPC request.
+
+* **Lesson:** The firewall allowed Port 445 traffic, assuming it was "Business Valid." Because the protocol was decayed, the "Valid" traffic carried a lethal payload.
+
 ---
 *Syntropy Security Tradecraft Archives*
