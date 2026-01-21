@@ -153,6 +153,7 @@ sudo snort \
   -k none
 ```
 
+---
 ### Sigma Rule – Svchost Spawning Shell (NetAPI Exploitation)
 ```
 title: Shell Spawned by Svchost (MS08-067 NetAPI)
@@ -251,9 +252,20 @@ The following evidence artifacts should be included to support this detection an
 ```
 
 - **Figure 2:** Wireshark capture filtered on DCE/RPC over SMB highlighting the `NetPathCanonicalize` call
+  ![Figure 2 – Wireshark DCE/RPC NetPathCanonicalize](./Assets/Wireshark.png)
+  
+
 - **Figure 3:** Snort alert generated during offline PCAP replay
+  ![Figure 3 – Snort Alert During Offline PCAP Replay](./Assets/Pcap_replay.png)
+  
+
 - **Figure 4:** Metasploit exploitation attempt against the target host
+  ![Figure 4 – Metasploit MS08-067 Exploitation Attempt](./Assets/MSf_Exploit.png)
+  
+
 - **Figure 5:** Real-time Snort alert during live exploitation
+ ![Figure 5 – Real-Time Snort Alert During Live Exploitation](./Assets/Live-replay.png)
+
 
 These artifacts demonstrate visibility across the full attack lifecycle, from initial exploitation attempt to potential post-exploitation impact.
 
