@@ -1,3 +1,5 @@
+> **Syntropy Intel:** 🧠 [Mental Model: False Failure](../../../../00-Mental-Models/The-False-Failure-Paradox.md) | 🛡️ [Detection Rules: FIM](../../../../02-Detection-Engineering/Universal-FIM-Rules.md)
+
 # Hack The Box (HTB) Nibbles Machine Writeup | [54nK4lP3x3]
 
 **Hack the Box machine walkthrough of HTB Nibbles by: [`54nK4lP3x3`](https://app.hackthebox.com/profile/1630957)**
