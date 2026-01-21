@@ -1,3 +1,5 @@
+> **Syntropy Intel:** 🧠 [Mental Model: Protocol Decay](../../../../00-Mental-Models/Protocol-Decay.md) | 🛡️ [Detection Rules: MS08-067](../../../../02-Detection-Engineering/MS08-067-Rules.md)
+
 # Hack The Box (HTB) Legacy Machine Writeup | [54nK4lP3x3]
 
 **Hack the Box machine walkthrough of [HTB Legacy](https://app.hackthebox.com/machines/Legacy?tab=play_machine) by: [`54nK4lP3x3`](https://app.hackthebox.com/profile/1630957)**
