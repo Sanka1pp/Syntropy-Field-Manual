@@ -1,7 +1,7 @@
 # Hack The Box (HTB) Lame Machine Writeup | [54nK4lP3x3]
 
-> **Syntropy Intel:** 🧠 [Mental Model: {Name}](../../../00-Mental-Models/{File}.md) | 🛡️ [Detection Rules: {Name}](../../../02-Detection-Engineering/{File}.md)
-
+> **Syntropy Intel:** 🧠 [Mental Model: The Legacy Bridge](../../../00-Mental-Models/The-Legacy-Bridge.md) | 🛡️ [Detection Rules: Samba Map Script](../../../02-Detection-Engineering/Samba-Map-Script.md)
+> 
 ## 1. Executive Summary
 
 **Lame** is a foundational case study in **Legacy Bridge** architecture. It represents a typical enterprise scenario where a Linux server acts as a compatibility bridge for Windows clients using the Samba protocol.
