@@ -100,33 +100,20 @@ Organizations often keep legacy protocols (like SMBv1 or old Samba versions) ali
 ### 🛡️ Syntropy Detection Engineering
 
 **1. Network Intrusion Detection (NIDS):**
-* **Signature:** Look for shell metacharacters (`` ` ``, `$()`, `&`, `;`) within the SMB `session setup` packet's username field.
-* **Snort Rule (Untested):**
+* **Signature:** Detects shell artifacts (`/bin/sh`) within the SMB `session setup` packet.
+* **Status:** ✅ Verified
+* **Snort Rule:**
 
 ```bash
-alert tcp $EXTERNAL_NET any -> $HOME_NET 139,445 (msg:"Syntropy-Detection: Samba usermap_script RCE Attempt"; flow:to_server,established; content:"/bin/sh"; nocase; sid:1000003; rev:1;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 139,445 (msg:"Syntropy-Detection: Samba usermap_script RCE Attempt"; flow:to_server,established; content:"/bin/sh"; nocase; sid:1000003; rev:3;)
 ```
 
 **1. 2. Endpoint Logic:**
 
 * **Process Heritage:** Alert when sh or bash is spawned as a child process of smbd.
 
-* **Sigma Rule:**
-```
-title: Shell Spawned by Samba Service
-status: Experimental
-logsource:
-    category: process_creation
-    product: linux
-detection:
-    parent_process:
-        Image|endswith: '/smbd'
-    child_process:
-        Image|endswith:
-            - '/sh'
-            - '/bash'
-    condition: parent_process and child_process
-level: critical
-```
+Status: ✅ Verified (Process Tree Analysis)
+Full Analysis: For live evidence screenshots and detailed logic, see the [Detection Rules: Samba Map Script](../../../02-Detection-Engineering/Samba-Map-Script.md)
 
 ---
+**Prepared by Operator:** `54nK4lP3x3` | Syntropy Security — *For defenders who think like attackers.*
