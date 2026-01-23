@@ -1,6 +1,6 @@
 # Hack The Box (HTB) Lame Machine Writeup | [54nK4lP3x3]
 
-> **Syntropy Intel:** 🧠 [Mental Model: The Legacy Bridge](../../00-Mental-Models/The-Legacy-Bridge.md) | 🛡️ [Detection Rules: Samba Map Script](../../02-Detection-Engineering/Samba-Map-Script.md)
+> **Syntropy Intel:** 🧠 [Mental Model: {Name}](../../../00-Mental-Models/{File}.md) | 🛡️ [Detection Rules: {Name}](../../../02-Detection-Engineering/{File}.md)
 
 ## 1. Executive Summary
 
