@@ -1,21 +1,19 @@
-# Detection Engineering: Samba Map Script (CVE-2007-2447)
+# Mental Model: The Legacy Bridge
 
-> **Syntropy Intel:** 🧠 [Mental Model: The Legacy Bridge](../00-Mental-Models/The-Legacy-Bridge.md)
+> **Syntropy Intel:** 🐧 [Case Study: Lame (Linux)](../01-HackTheBox/Linux/Lame/Report.md) | 🛡️ [Detection Logic: Samba Map Script](../02-Detection-Engineering/Samba-Map-Script.md)
 
-### 1. Conceptual Framework
-**The Artifact:**
-The CVE-2007-2447 exploit abuses the `username map script` configuration in Samba. It injects shell metacharacters (like backticks `` ` `` or `;`) directly into the username field during the SMB Session Setup phase.
+### Definition
+The **Legacy Bridge** is an architectural vulnerability where a single system is intentionally kept in an outdated, insecure state to provide compatibility between modern networks and legacy assets (e.g., old mainframes, industrial SCADA systems, or deprecated Windows clients).
 
-**The Logic:**
-Instead of looking for specific payloads, we detect the anomaly of a shell invocation command (`/bin/sh`, `nohup`) appearing inside the username string of an SMB packet, or the `smbd` daemon spawning a shell on the endpoint.
+### Operational Context
+In the **Lame** operation (linked above), the target ran **Samba 3.0.20**. This version was likely maintained to support older Windows clients or specific file-sharing protocols.
+* **The Operator's Advantage:** These bridges often run with high privileges (Root/System) because they require deep OS integration to function. Compromising the bridge grants control over the traffic flowing across it.
+* **The "False Lead":** Operators must distinguish between "Noise" (like the vsftpd backdoor, which is easily blocked) and "Signal" (the Samba flaw, which is architectural).
+
+### Detection Engineering
+Defenders cannot always patch these bridges (due to compatibility requirements), so they must **isolate** them.
+* **Micro-Segmentation:** Place the Legacy Bridge in a VLAN with strictly limited ACLs.
+* **Process Monitoring:** Monitor for "Process Heritage" anomalies. A File Server service (`smbd`) should never spawn a command shell (`/bin/sh`).
 
 ---
-
-### 2. Network Signature (Snort/Suricata)
-**Status:** ✅ `Verified` (Snort 3.x / Kali Linux Lab)
-**Description:** Detects the presence of `/bin/sh` embedded within the SMB Session Setup AndX request username field.
-
-```bash
-# Rule: Syntropy Samba Username Map Script Injection
-alert tcp $EXTERNAL_NET any -> $HOME_NET 139,445 (msg:"Syntropy-Detection: Samba Username Map Script Injection"; flow:to_server,established; content:"|00|"; depth:1; content:"/bin/sh"; distance:0; metadata:service netbios-ssn; sid:1000003; rev:1;)
-```
+*Syntropy Security Tradecraft Archives*
