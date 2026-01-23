@@ -34,7 +34,7 @@ To replicate this detection in a lab environment (Kali Linux), create the follow
 ### A. The Rule File (`samba.rules`)
 This rule detects the default Metasploit payload artifact (`/bin/sh`) traversing the SMB protocol.
 
-```bash
+```
 # Save as: samba.rules
 alert tcp $EXTERNAL_NET any -> $HOME_NET 139,445 (msg:"Syntropy-Detection: Samba Username Map Script Injection"; flow:to_server,established; content:"/bin/sh"; fast_pattern; metadata:service netbios-ssn; sid:1000003; rev:3;)
 ```
@@ -53,8 +53,6 @@ ips = { enable_builtin_rules = true }
 ### C. Execution & Verification
 
 **Step 1:** Start the Defender (Snort) Run Snort in alert mode. Note: Replace tun0 with your active network interface (e.g., eth0).
-
-Bash
 
 ```sudo snort -c minimal.lua -R samba.rules -i tun0 -A alert_fast -k none```
 
