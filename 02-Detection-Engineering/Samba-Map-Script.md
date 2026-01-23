@@ -20,6 +20,7 @@ The CVE-2007-2447 exploit abuses the `username map script` configuration in Samb
 # Rule: Syntropy Samba Username Map Script Injection
 alert tcp $EXTERNAL_NET any -> $HOME_NET 139,445 (msg:"Syntropy-Detection: Samba Username Map Script Injection"; flow:to_server,established; content:"/bin/sh"; fast_pattern; metadata:service netbios-ssn; sid:1000003; rev:3;)
 ```
+Anomoly : A file server (smbd) should never be the parent of a shell (sh) or a network tool (nc).
 
 ---
 
