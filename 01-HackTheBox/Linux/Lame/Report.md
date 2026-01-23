@@ -33,7 +33,7 @@ The scan reveals a rich, albeit dated, attack surface:
 * **Port 445:** `Samba 3.0.20-Debian` (The primary target).
 * **OS:** Debian (Unix).
 
-![Nmap Scan Output]("Assets/image1.png")
+![Nmap Scan Output](Assets/image1.png)
 
 
 > *Operator Note: While `vsftpd 2.3.4` is flagged as vulnerable, it often fails on this target due to firewall restrictions or specific build configurations. Novice attackers get stuck here. Experienced operators identify this as a "False Lead" and pivot immediately to the higher-probability SMB vector.*
