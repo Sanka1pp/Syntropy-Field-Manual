@@ -23,6 +23,7 @@ Every engagement documented here follows the **Reporter Protocol**, emphasizing 
 | **[Nibbles](https://github.com/Sanka1pp/Syntropy-Field-Manual/blob/main/01-HackTheBox/Linux/Nibbles/Hack%20The%20Box%20(HTB)%20Nibbles%20Machine%20Writeup%20%5B54nK4l%202ed8aeddd8dc80f99963c9bc0e180d93.md)** | 🐧 | `Easy` | [The False Failure Paradox](00-Mental-Models/The-False-Failure-Paradox.md) | [Universal FIM Rules](02-Detection-Engineering/Universal-FIM-Rules.md) |
 | **[Legacy](01-HackTheBox/Windows/Legacy/Report.md)** | 🪟 | `Easy` | [Protocol Decay](00-Mental-Models/Protocol-Decay.md) | [MS08-067 Signatures](02-Detection-Engineering/MS08-067-Rules.md) |
 | **[Lame](01-HackTheBox/Linux/Lame/Report.md)** | 🐧 | `Easy` | [The Legacy Bridge](00-Mental-Models/The-Legacy-Bridge.md) | [Samba Map Script](02-Detection-Engineering/Samba-Map-Script.md) |
+| **[Jerry](01-HackTheBox/Windows/Jerry/Report.md)** | 🪟 | `Easy` | [The Exposed Console](00-Mental-Models/The-Exposed-Console.md) | [Tomcat WAR Rules](02-Detection-Engineering/Tomcat-WAR-Deploy.md) |
 
 ---
 
