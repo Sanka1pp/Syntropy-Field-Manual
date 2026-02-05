@@ -19,28 +19,28 @@ We initiated a targeted scan to identify the attack surface. The host exposed mi
 **Operator's Assessment:**
 The presence of Port 8080 typically indicates a Java-based web application container. We performed directory enumeration to identify hidden administrative endpoints.
 
-![Nmap Scan Output](Assets/image.png)
+![Nmap Scan Output](Assets/nmap_scan.png)
 *Figure 1: Initial port enumeration reveals a Tomcat instance on 8080.*
 
-![Gobuster Directory Scan](Assets/image%201.png)
+![Gobuster Directory Scan](Assets/gobuster_scan.png)
 *Figure 2: Directory enumeration confirms the presence of `/manager` and `/docs`.*
 
 ## 3. The Strategic Pivot: Credential Hygiene Failure
 Upon accessing the web root, we attempted to access the `/manager/html` dashboard. The server responded with a **403 Access Denied** error. Crucially, the error message leaked the credential configuration structure—a "Verbose Failure" vulnerability that hinted at the expected role and user format.
 
-![403 Access Denied](Assets/image%202.jpg)
+![403 Access Denied](Assets/access_denied.png)
 *Figure 3: The server denies access but hints at the authentication mechanism.*
 
 **The Breakthrough:**
 We attempted standard default credential pairs for Apache Tomcat using Basic Authentication.
 * **Credentials:** `tomcat` / `s3cret`
 
-![Login Prompt](Assets/image%203.jpg)
+![Login Prompt](Assets/login_prompt.png)
 *Figure 4: Authentication challenge on the Manager interface.*
 
 This resulted in immediate access to the **Tomcat Web Application Manager**. This dashboard allows an administrator to deploy `.war` (Web Archive) files—a feature designed for developers but weaponizable by attackers.
 
-![Manager Dashboard](Assets/image%204.png)
+![Manager Dashboard](Assets/manager_dashboard.png)
 *Figure 5: Successful authentication reveals the administrative console.*
 
 ## 4. Exploitation: Weaponized Deployment
@@ -51,7 +51,7 @@ Tomcat allows the upload of `.war` files which are automatically unpacked and ex
 **Method A: Manual GUI Upload**
 We verified the manual upload capability via the GUI, confirming that no WAF (Web Application Firewall) or file-type validation was in place to block malicious JSP code.
 
-![WAR File Upload](Assets/image%208.png)
+![WAR File Upload](Assets/manual_upload.png)
 *Figure 6: Uploading the malicious 'Application' via the GUI.*
 
 **Method B: Command Line Deployment (Syntropy Standard)**
@@ -60,20 +60,20 @@ To maintain operational stealth and speed, we constructed a malicious JSP payloa
 2.  **Deployment:** Uploaded the archive via the `/manager/text/deploy` endpoint.
 3.  **Trigger:** Accessed the deployed endpoint (`/shell`) to force execution.
 
-![Payload Generation and Deployment](Assets/image%206.jpg)
+![Payload Generation and Deployment](Assets/msfvenom_payload.png)
 *Figure 7: Generating the payload (Left) and catching the SYSTEM shell (Right).*
 
 ## 5. Post-Exploitation & Impact
 **Initial Access:**
 The reverse connection was established immediately. Due to the Tomcat service running with high privileges (a critical configuration error), the session was established as **NT AUTHORITY\SYSTEM**.
 
-![System Shell Confirmation](Assets/image%209.png)
+![System Shell Confirmation](Assets/system_shell.png)
 *Figure 8: Confirmation of high-privilege access and data exfiltration.*
 
 **Proof of Compromise:**
 We successfully retrieved both the User and Root flags, confirming total control over the asset.
 
-![Pwned Confirmation](Assets/image%207.jpg)
+![Pwned Confirmation](Assets/pwned_flag.png)
 *Figure 9: Engagement objectives met.*
 
 ## 6. Syntropy Retrospective
