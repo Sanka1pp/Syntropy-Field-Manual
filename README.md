@@ -25,7 +25,7 @@ Every engagement documented here follows the **Reporter Protocol**, emphasizing 
 | **[Lame](01-HackTheBox/Linux/Lame/Report.md)** | 🐧 | `Easy` | [The Legacy Bridge](00-Mental-Models/The-Legacy-Bridge.md) | [Samba Map Script](02-Detection-Engineering/Samba-Map-Script.md) |
 | **[Jerry](01-HackTheBox/Windows/Jerry/Report.md)** | 🪟 | `Easy` | [The Exposed Console](00-Mental-Models/The-Exposed-Console.md) | [Tomcat WAR Rules](02-Detection-Engineering/Tomcat-WAR-Deploy.md) |
 | **[Knife](01-HackTheBox/Linux/Knife/Report.md)** | 🐧 | `Easy` | [The Poisoned Well](00-Mental-Models/The-Poisoned-Well.md) | [PHP Backdoor Rules](02-Detection-Engineering/PHP-Backdoor-UserAgentt.md) |
-
+| **[Netmon](01-HackTheBox/Windows/Netmon/Readme.md)** | 🪟 | `Easy` | [The Artifact Echo](00-Mental-Models/The-Artifact-Echo.md) | [PRTG RCE Rules](02-Detection-Engineering/Detection-PRTG-RCE.md) |
 ---
 
 ### Detection Engineering
