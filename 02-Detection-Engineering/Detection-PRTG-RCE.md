@@ -1,4 +1,4 @@
-| 📡 **[Mission Report](../../../01-HackTheBox/Windows/Netmon/Report.md)** | 🧠 **[Mental Model](../../../00-Mental-Models/The-Artifact-Echo.md)** |
+| 📡 **[Mission Report](../01-HackTheBox/Windows/Netmon/Readme.md)** | 🧠 **[Mental Model](../00-Mental-Models/The-Artifact-Echo.md)** |
 
 # Syntropy Defense Protocol | [54nK4lP3x3]
 
