@@ -9,6 +9,8 @@
 * **Supply Chain Compromise:** The host was running a backdoored version of PHP (8.1.0-dev) containing a malicious commit.
 * **Privilege Escalation:** Misconfigured `sudo` permissions allowed the `knife` administrative tool to execute arbitrary code as root.
 * **Business Impact:** Immediate, unauthenticated remote code execution leading to total infrastructure takeover.
+  
+---
 
 ## 2. Reconnaissance: Identifying the Supply Chain Break
 **The Filter:**
@@ -28,6 +30,8 @@ Further analysis with `whatweb` confirmed the `X-Powered-By` header, validating 
 ![WhatWeb Scan](Assets/image1.png)
 *Figure 2: Header analysis confirms the specific development build.*
 
+---
+
 ## 3. The Strategic Pivot: The "User-Agentt" Backdoor
 **The Vector:** Unauthenticated Remote Code Execution (RCE).
 **The Mechanism:**
@@ -39,7 +43,9 @@ We utilized a Python script to inject the payload into the malicious header.
 * **Result:** Immediate execution as `james`.
 
 ![Initial Access](Assets/image2.png)
-*Figure 3: Triggering the backdoor to achieve initial foothold.*
+*Figure 3: Triggering the backdoor to achieve initial foothold.*  
+
+---
 
 ## 4. Privilege Escalation: The "Janus" Tool
 **Initial Access:** User `james` context established.
@@ -57,10 +63,16 @@ A review of sudo privileges (`sudo -l`) revealed a critical misconfiguration. Th
 ```bash
 sudo /usr/bin/knife exec -E 'exec "/bin/sh"'
 ```
+![Privilege Escalation](Assets/knife_linix_privesc.png)
+
 *Figure 5: abusing the intended functionality of 'knife' to pivot to Root.*
+
+---
 
 ![Attack Chain Summary](Assets/Htb_knife.png)
 *Figure 6: Full Attack Path Visualization.*
+
+---
 
 ## 5. Syntropy Retrospective
 **Why This Happened:**
