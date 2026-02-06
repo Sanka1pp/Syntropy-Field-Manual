@@ -1,4 +1,4 @@
-| 📡 **[Mission Report](../01-HackTheBox/Windows/Netmon/Readme.md)** | 🛡️ **[Detection Rules](../02-Detection-Engineering/Detection-PRTG-RCE.md)** |
+| 📡 **[Mental Model](../../../00-Mental-Models/The-Artifact-Echo.md)** | 🛡️ **[Detection Rules](../02-Detection-Engineering/Detection-PRTG-RCE.md)** |
 
 # Hack The Box (HTB) Netmon Machine Writeup | [54nK4lP3x3]
 
