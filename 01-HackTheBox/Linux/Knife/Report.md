@@ -25,7 +25,7 @@ The version `PHP 8.1.0-dev` is historically significant. In March 2021, the PHP 
 
 Further analysis with `whatweb` confirmed the `X-Powered-By` header, validating the target was running the poisoned build.
 
-![WhatWeb Scan](Assets/image%201.png)
+![WhatWeb Scan](Assets/image1.png)
 *Figure 2: Header analysis confirms the specific development build.*
 
 ## 3. The Strategic Pivot: The "User-Agentt" Backdoor
@@ -38,7 +38,7 @@ We utilized a Python script to inject the payload into the malicious header.
 * **Header:** `User-Agentt: zerodiumsystem("whoami");`
 * **Result:** Immediate execution as `james`.
 
-![Initial Access](Assets/image%202.png)
+![Initial Access](Assets/image2.png)
 *Figure 3: Triggering the backdoor to achieve initial foothold.*
 
 ## 4. Privilege Escalation: The "Janus" Tool
@@ -46,7 +46,7 @@ We utilized a Python script to inject the payload into the malicious header.
 **Enumeration:**
 A review of sudo privileges (`sudo -l`) revealed a critical misconfiguration. The user `james` was permitted to run `/usr/bin/knife` as `root` without a password.
 
-![Sudo Recon](Assets/image%203.png)
+![Sudo Recon](Assets/image3.png)
 *Figure 4: Identification of the 'knife' binary in sudoers.*
 
 **The Escalation:**
@@ -59,6 +59,9 @@ sudo /usr/bin/knife exec -E 'exec "/bin/sh"'
 ```
 *Figure 5: abusing the intended functionality of 'knife' to pivot to Root.*
 
+![Attack Chain Summary](Assets/Htb_knife.png)
+*Figure 6: Full Attack Path Visualization.*
+
 ## 5. Syntropy Retrospective
 **Why This Happened:**
 1.  **Supply Chain Failure:** The organization deployed a "dev" version of a core language (PHP) into production without verifying the integrity of the binary. This bypassed standard vulnerability scanning because the flaw was not a CVE in the code logic, but a malicious injection in the source itself.
@@ -69,5 +72,4 @@ sudo /usr/bin/knife exec -E 'exec "/bin/sh"'
 2.  **Tactical:** Remove the sudo entry for `/usr/bin/knife`. If administrative access is required for Chef management, restrict execution to specific, read-only scripts or require a strong password.
 3.  **Strategic:** Implement "Software Bill of Materials" (SBOM) scanning to prevent development builds ("-dev", "-nightly") from reaching production interfaces.
 
-![Attack Chain Summary](Assets/knife_linix_privesc.jpg)
-*Figure 6: Full Attack Path Visualization.*
+
