@@ -1,20 +1,19 @@
-#  Target: Netmon (Windows)
+| Syntropy Intel: 🧠 [Mental Model: The Artifact Echo](The-Artifact-Echo.md) | 🛡️ [Detection Rules: PRTG RCE](Detection-PRTG-RCE.md) |
 
-**Difficulty:** Easy
-**IP:** `10.10.10.152`
-**Tags:** `FTP` `Config Leak` `PRTG` `CVE-2018-9276`
-**Status:** 🚩 Compromised
+# Hack The Box (HTB) Netmon Machine Writeup | [54nK4lP3x3]
 
----
+**Hack the Box machine walkthrough of [HTB Netmon](https://app.hackthebox.com/machines/Netmon) by: [54nK4lP3x3](https://github.com/Sanka1pp)**
 
 ## 1. Executive Summary
+
 **Objective:** Assessment of the host "Netmon" to identify exploitable paths to high-privilege access.
 **Outcome:** **Critical Compromise** (System Authority Achieved).
-**Key Findings:**
-* **Information Leakage:** Anonymous FTP access exposed sensitive configuration backups containing administrative credentials.
-* **Weak Credential Policy:** The administrative password followed a predictable rotation pattern (Year-based), allowing for easy deduction of the current password.
-* **Vulnerable Application:** The host was running an unpatched version of PRTG Network Monitor susceptible to Authenticated Remote Code Execution (RCE).
-* **High Reliability:** The vulnerability was successfully exploited using three distinct vectors (Metasploit, Manual Script, and Session Riding), indicating a total lack of mitigating controls.
+
+**The Kill Chain:**
+1.  **Recon:** Identification of Anonymous FTP (Port 21) and PRTG Network Monitor (Port 80).
+2.  **Information Leakage:** Discovery of sensitive backup files (`PRTG Configuration.old.bak`) containing administrative credentials.
+3.  **Logic Pivot:** Deducting the current password (`2019`) based on the pattern found in the leaked credential (`2018`).
+4.  **Exploitation:** Leveraging CVE-2018-9276 (Authenticated RCE) via three distinct vectors to achieve `NT AUTHORITY\SYSTEM`.
 
 **Attack Path Visual:**
 ![Attack Path](Assets/Netmon.png)
@@ -25,7 +24,6 @@
 ## 2. Reconnaissance: The Open Door
 **The Filter:**
 Initial scanning identified a Windows host exposing web and file transfer services.
-
 * **Port 21:** Microsoft FTP Service.
 * **Port 80:** Indiy httpd (PRTG Bandwidth Monitor).
 
