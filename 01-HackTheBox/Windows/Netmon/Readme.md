@@ -1,4 +1,4 @@
-| Syntropy Intel: 🧠 [Mental Model: The Artifact Echo](The-Artifact-Echo.md) | 🛡️ [Detection Rules: PRTG RCE](Detection-PRTG-RCE.md) |
+| Syntropy Intel: 🧠 [Mental Model: The Artifact Echo](../../../00-Mental-Models/The-Artifact-Echo.md) | 🛡️ [Detection Rules: PRTG RCE](../../../02-Detection-Engineering/Detection-PRTG-RCE.md) |
 
 # Hack The Box (HTB) Netmon Machine Writeup | [54nK4lP3x3]
 
