@@ -12,7 +12,7 @@ In cybersecurity, an **Artifact Echo** refers to data left behind by a process o
 When an administrator updates a system (e.g., changing a password), they often leave a trace of the *previous* state in backup files, log entries, or old scripts. While the data itself (the old password) is invalid, the **pattern** used to create it often remains unchanged.
 
 ### 2. Case Study: HTB Netmon
-In the [Netmon Engagement](Report.md), we encountered a secure system with a rotated password.
+In the [Netmon Engagement](Readme.md), we encountered a secure system with a rotated password.
 * **The Artifact:** `PRTG Configuration.old.bak` (A backup file).
 * **The Echo:** `PrTg@dmin2018` (The old credential).
 * **The Logic:** The password was constructed using `Service` + `@` + `Role` + `Year`.
