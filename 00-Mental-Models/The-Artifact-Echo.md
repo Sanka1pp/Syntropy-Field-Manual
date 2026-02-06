@@ -1,15 +1,30 @@
-# Mental Model: The Artifact Echo
+| 📡 **[Mission Report](Report.md)** | 🛡️ **[Detection Rules](Detection-PRTG-RCE.md)** |
 
-**Concept:**
-In cybersecurity, an "Artifact Echo" refers to data left behind by a process that is no longer active but still holds truth about the system's logic.
+# Syntropy Mental Models | [54nK4lP3x3]
 
-**The Netmon Case:**
-The administrator had secured the live system by changing the password. Technically, the old password was useless. However, they left an **Echo** of that password in the `.old.bak` file.
+## 🧠 The Artifact Echo
 
-**The Syntropy:**
-* **The Past (Echo):** `PrTg@dmin2018`
-* **The Logic:** The password structure is `Prefix` + `Year`.
-* **The Future (Key):** By applying the logic to the current time, we derive `PrTg@dmin2019`.
+> *"The ghost of the old password haunts the new one."*
 
-**Application:**
-When you encounter "stale" data (backups, log files, old emails), do not discard it as irrelevant. It reveals the **Format**, the **Structure**, and the **Mindset** of the creator. If you know how they built the old lock, you know how they built the new one.
+### 1. The Concept
+In cybersecurity, an **Artifact Echo** refers to data left behind by a process or policy that is technically "dead" (no longer active) but still holds truth about the system's logic.
+
+When an administrator updates a system (e.g., changing a password), they often leave a trace of the *previous* state in backup files, log entries, or old scripts. While the data itself (the old password) is invalid, the **pattern** used to create it often remains unchanged.
+
+### 2. Case Study: HTB Netmon
+In the [Netmon Engagement](Report.md), we encountered a secure system with a rotated password.
+* **The Artifact:** `PRTG Configuration.old.bak` (A backup file).
+* **The Echo:** `PrTg@dmin2018` (The old credential).
+* **The Logic:** The password was constructed using `Service` + `@` + `Role` + `Year`.
+
+### 3. The Syntropy Application
+Do not treat "old" data as trash. It is an **Echo** that reveals the mindset of the architect.
+
+* **If you find:** `Backup_Jan.zip` -> **Try:** `Backup_Feb.zip`
+* **If you find:** `Admin2020!` -> **Try:** `Admin2025!`
+* **If you find:** `dev_test_v1` -> **Try:** `prod_v1`
+
+**Rule:** If you know how they built the old lock, you know how they built the new one.
+
+---
+**[← Return to Mission Report](Report.md)**
